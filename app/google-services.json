@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "516786968885",
+    "project_id": "push-notification-demo-f2d39",
+    "storage_bucket": "push-notification-demo-f2d39.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516786968885:android:3c1bb735f33553eac7547c",
+        "android_client_info": {
+          "package_name": "com.example.cloudfunctionsdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516786968885-a6i509ikio94kvttek3khbf3jarithua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAS8kJ4AOcZ9XmF1eFdJ7yk_SUTEqD0GFY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516786968885-a6i509ikio94kvttek3khbf3jarithua.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
