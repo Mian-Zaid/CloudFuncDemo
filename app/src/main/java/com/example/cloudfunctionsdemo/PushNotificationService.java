@@ -1,8 +1,11 @@
 package com.example.cloudfunctionsdemo;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
@@ -15,28 +18,17 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.net.Inet4Address;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressLint("MissingFirebaseInstanceTokenRefresh")
 public class PushNotificationService extends FirebaseMessagingService {
-
-    //generate new token for device and register in firestore
-    @Override
-    public void onNewToken(@NonNull @NotNull String s) {
-        super.onNewToken(s);
-        Map<String,Object> token=new HashMap<>();
-
-        token.put("token",s);
-
-        FirebaseFirestore firebaseFirestore=FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("DeviceTokens").document().set(token);
-    }
 
     //receive notification and display it on device
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMessageReceived(@NonNull @org.jetbrains.annotations.NotNull RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
 
         String title = remoteMessage.getNotification().getTitle();
         String body = remoteMessage.getNotification().getBody();
@@ -48,13 +40,29 @@ public class PushNotificationService extends FirebaseMessagingService {
                 NotificationManager.IMPORTANCE_HIGH
         );
 
+        //on click go to Main Activity
+        Intent activityIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
+
+        //on click button toast the message
+        Intent broadcastIntent = new Intent(this, NotificationReceiver.class);
+        broadcastIntent.putExtra("title", title);
+        PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent dismissIntent = PendingIntent.getActivity(this, 0, activityIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
         getSystemService(NotificationManager.class).createNotificationChannel(notificationChannel);
         Notification.Builder builder = new Notification.Builder(this, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(body)
+                .setContentIntent(contentIntent)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .addAction(R.drawable.ic_launcher_foreground, "Accept", actionIntent)
+                .addAction(R.drawable.ic_launcher_foreground, "Reject", dismissIntent)
                 .setAutoCancel(true);
 
         NotificationManagerCompat.from(this).notify(1, builder.build());
+        super.onMessageReceived(remoteMessage);
+
     }
 }
